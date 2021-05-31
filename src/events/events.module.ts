@@ -3,6 +3,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Attendee } from '../attendee.entity';
 import { Event } from './event.entity';
 import { EventsController } from './events.controller';
+import { EventsService } from './events.service';
 
 // Custom module with specific tools
 // nest generate module events
@@ -10,6 +11,7 @@ import { EventsController } from './events.controller';
   imports: [
     TypeOrmModule.forFeature([Event, Attendee]),
   ],
-  controllers: [EventsController]
+  controllers: [EventsController],
+  providers: [EventsService]
 })
 export class EventsModule { }

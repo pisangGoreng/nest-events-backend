@@ -1,10 +1,12 @@
-import { Body, Controller, Delete, Get, HttpCode, Logger, Param, Patch, Post, UsePipes, ValidationPipe } from "@nestjs/common";
+import { Body, Controller, Delete, Get, HttpCode, Logger, NotFoundException, Param, Patch, Post, Query, UsePipes, ValidationPipe } from "@nestjs/common";
 import { InjectRepository } from "@nestjs/typeorm";
 import { Repository } from "typeorm";
 import { Event } from "./event.entity";
-import { UpdateEventDto } from "./update-event.dto";
-import { CreateEventDto } from "./create-event.dto";
+import { UpdateEventDto } from "./input/update-event.dto";
+import { CreateEventDto } from "./input/create-event.dto";
 import { Attendee } from "../attendee.entity";
+import { EventsService } from "./events.service";
+import { ListEvents } from "./input/list.events";
 
 @Controller('/events')
 export class EventsController {
@@ -15,16 +17,22 @@ export class EventsController {
     private readonly repository: Repository<Event>,
 
     @InjectRepository(Attendee)
-    private readonly attendeeRepository: Repository<Attendee>
+    private readonly attendeeRepository: Repository<Attendee>,
+
+    private readonly eventsService: EventsService
   ) {
 
   }
 
   @Get()
-  async findAll() {
-    this.logger.log('Hit the findall route')
-    const events = await this.repository.find()
-    this.logger.debug(`found ${events.length} event`)
+  @UsePipes(new ValidationPipe({ transform: true }))
+  async findAll(@Query() filter: ListEvents) {
+    const events = await this.eventsService.getEventsWithAttendeeCountFilteredPaginated(
+      filter, {
+        total: true,
+        currentPage: filter.page,
+        limit: 10
+      })
     return events
   }
 
@@ -46,7 +54,11 @@ export class EventsController {
 
   @Get(':id')
   async findOne(@Param('id') id) {
-    const event = await this.repository.findOne(id)
+    const event = await this.eventsService.getEvent(id)
+
+    if(!event) {
+      throw new NotFoundException();
+    }
 
     return event;
   }

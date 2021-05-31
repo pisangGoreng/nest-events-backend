@@ -26,4 +26,9 @@ export class Event {
   })
   attendees: Attendee[];
 
+  attendeeCount? : number // ? => optional
+
+  attendeeRejected?: number;
+  attendeeMaybe?: number;
+  attendeeAccepted?: number;
 }
