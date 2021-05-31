@@ -1,0 +1,23 @@
+
+Controller
+  - class yg terhubung dengan controller decorator
+  - controller handling the request
+  - punya action (GET,POST, dll)
+  - job
+    - membuat end point with spesific path & http verbs
+  - path -> controller -> action (proses ini namanya routing)
+
+
+   1. create controller
+   2. register to nestjs
+
+
+   docker-compose up
+
+
+   module
+    ->
+      controller
+        - repository di inject ke sini
+        - entity di inject ke repository orm
+
