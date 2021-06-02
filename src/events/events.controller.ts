@@ -59,7 +59,6 @@ export class EventsController {
     if(!event) {
       throw new NotFoundException();
     }
-
     return event;
   }
 
